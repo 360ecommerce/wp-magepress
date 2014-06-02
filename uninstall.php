@@ -1,0 +1,1 @@
+<?php // When the plugin is deleted ?>

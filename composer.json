@@ -1,0 +1,17 @@
+{
+    "name": "360ecommerce/magepress",
+    "type": "wordpress-plugin",
+    "description": "Wordpress plugin to integrate Magento",
+    "authors": [
+        {
+            "name": "Gijs Jorissen",
+            "email": "gijs@360ecommerce.nl"
+        },
+        {
+            "name": "Johan Spoelstra",
+            "email": "johan@360ecommerce.nl"
+        }
+    ],
+    "require": {
+    }
+}
