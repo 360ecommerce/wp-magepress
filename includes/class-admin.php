@@ -9,11 +9,11 @@ class Magepress_Admin
 	function __construct()
 	{
         // Settings
-        add_action('admin_init', array( &$this, 'set_settings' ));
-        add_action('admin_init', array( &$this, 'add_settings' ));
+        add_action( 'admin_init', array( &$this, 'set_settings' ) );
+        add_action( 'admin_init', array( &$this, 'add_settings' ) );
 
         // Page
-		add_action('admin_menu', array( &$this, 'admin_menu' ));
+		add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
 	}
 
     function set_settings()
@@ -22,35 +22,40 @@ class Magepress_Admin
             'magepress' => array(
                 'magepress_settings'        => array( 
                     'id'                    => 'magepress_settings',
-                    'title'                 => 'Settings',
+                    'title'                 => 'Magento',
                     'callback'              => '',
                     'fields'                => array(
-                        'magepress_url'     => array(
+                        array(
+                            'id'            => 'magepress_magento_url',
+                            'title'         => 'URL',
+                            'callback'      => array( &$this, 'callback_text' ),
+                        ),
+                        array(
+                            'id'            => 'magepress_magento_store',
+                            'title'         => 'Storeview',
+                            'callback'      => array( &$this, 'callback_text' ),
+                        ),
+                        array(
                             'id'            => 'magepress_api_url',
-                            'title'         => 'Magento API Url',
+                            'title'         => 'API URL',
                             'callback'      => array( &$this, 'callback_text' ),
                         ),
-                        'magepress_storeview'   => array(
-                            'id'                => 'magepress_storeview',
-                            'title'             => 'Magento API Store',
-                            'callback'          => array( &$this, 'callback_text' ),
-                        ),
-                        'magepress_user'    => array(
-                            'id'            => 'magepress_user',
-                            'title'         => 'Magento API User',
+                        array(
+                            'id'            => 'magepress_api_user',
+                            'title'         => 'API User',
                             'callback'      => array( &$this, 'callback_text' ),
                         ),
-                        'magepress_key'     => array(
-                            'id'            => 'magepress_key',
-                            'title'         => 'Magento API Key',
+                        array(
+                            'id'            => 'magepress_api_key',
+                            'title'         => 'API Key',
                             'callback'      => array( &$this, 'callback_text' ),
                         ),
-                        'magepress_use_cache' => array(
+                        array(
                             'id'            => 'magepress_use_cache',
                             'title'         => 'Use Cache',
                             'callback'      => array( &$this, 'callback_checkbox' ),
                         ),
-                        'magepress_caching_time' => array(
+                        array(
                             'id'            => 'magepress_caching_time',
                             'title'         => 'Caching Time',
                             'callback'      => array( &$this, 'callback_text' ),
@@ -130,7 +135,7 @@ class Magepress_Admin
         ?>
         <h2 class="nav-tab-wrapper">
             <a href="<?php echo admin_url( 'options-general.php?page=magepress' ) ?>" class="nav-tab <?php if($tab == 'settings'): ?>nav-tab-active<?php endif; ?>">
-                <?php _e( 'Settings', 'magepress' ) ?>
+                <?php _e( 'Magento', 'magepress' ) ?>
             </a>
             <a href="<?php echo admin_url( 'options-general.php?page=magepress&tab=cache' ) ?>" class="nav-tab <?php if($tab == 'cache'): ?>nav-tab-active<?php endif; ?>">
                 <?php _e( 'Cache', 'magepress' ) ?>

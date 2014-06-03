@@ -15,7 +15,7 @@ class Magepress_Cache
         $cache 	= set_transient( $hash, $object, get_option( 'magepress_caching_time' ) );
 
         // Update registry
-        self::update_registry( array(
+        Magepress::update_registry( 'magepress_cache_registry', array(
             'hash'  => $hash, 
             'name'  => $name, 
             'call'  => $call 
@@ -40,18 +40,4 @@ class Magepress_Cache
 
         return null;
     } 
-
-    static function update_registry( $args )
-    {
-        $registry = get_option( 'magepress_cache_registry' );
-        $registry[$args['hash']] = array(
-            'ID'    => uniqid(),
-            'hash'  => $args['hash'],
-            'name'  => $args['name'],
-            'call'  => $args['call'],
-            'purge' => 'Purge'
-        );
-
-        update_option( 'magepress_cache_registry', $registry );
-    }
 }
