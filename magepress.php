@@ -73,25 +73,29 @@ class Magepress
 			define( 'MAGEPRESS_URL', plugin_dir_url( __FILE__ ) );
 
 		if( ! defined( 'MAGEPRESS_CACHE_PREFIX' ) ) 
-			define( 'MAGEPRESS_CACHE_PREFIX', 'magepress_cache_' );
+			define( 'MAGEPRESS_CACHE_PREFIX', apply_filters( 'magepress_cache_prefix', 'magepress_cache_' ) );
 
-		if( ! defined( 'MAGEPRESS_STORE_URL' ) ) 
-			define( 'MAGEPRESS_STORE_URL', get_option( 'magento_store_url' ) );
+        // Settings
+		if( ! defined( 'MAGEPRESS_MAGENTO_URL' ) ) 
+			define( 'MAGEPRESS_MAGENTO_URL', get_option( 'magepress_magento_url' ) );
 
-		if( ! defined( 'MAGEPRESS_API_STORE' ) )
-			define( 'MAGEPRESS_API_STORE', get_option( 'magento_api_store' ) );
+        if( ! defined( 'MAGEPRESS_MAGENTO_STORE' ) )
+            define( 'MAGEPRESS_MAGENTO_STORE', get_option( 'magepress_magento_store' ) );
 
-		if( ! defined( 'MAGEPRESS_API_URL' ) ) 
-			define( 'MAGEPRESS_API_URL', get_option( 'magepress_api_url' ) );
+        if( ! defined( 'MAGEPRESS_API_URL' ) ) 
+            define( 'MAGEPRESS_API_URL', get_option( 'magepress_api_url' ) );
 
 		if( ! defined( 'MAGEPRESS_API_USER' ) ) 
-			define( 'MAGEPRESS_API_USER', get_option( 'magepress_user' ) );
+			define( 'MAGEPRESS_API_USER', get_option( 'magepress_api_user' ) );
 
 		if( ! defined( 'MAGEPRESS_API_KEY' ) ) 
-			define( 'MAGEPRESS_API_KEY', get_option( 'magepress_key' ) );
+			define( 'MAGEPRESS_API_KEY', get_option( 'magepress_apii_key' ) );
 
         if( ! defined( 'MAGEPRESS_USE_CACHE' ) ) 
             define( 'MAGEPRESS_USE_CACHE', get_option('magepress_use_cache') );
+
+        if( ! defined( 'MAGEPRESS_CACHING_TIME' ) ) 
+            define( 'MAGEPRESS_CACHING_TIME', get_option('magepress_caching_time') );
 	}
 
     /**
@@ -217,7 +221,6 @@ class Magepress
      */
     static function activate()
     {
-        add_option( 'magepress_cache_registry', array() );
     }
 
     /**
@@ -272,11 +275,11 @@ class Magepress
      * @author Gijs Jorissen
      * @since 0.1
      */
-    static function call( $name, $args, $title, $tries = 0 ) 
+    static function call( $hash, $args, $name, $tries = 0 ) 
     {
         // Get cache if cache enabled
         if( MAGEPRESS_USE_CACHE ) {
-            $cache = mp_get_cache( mp_generate_hash( $name, $args ) );
+            $cache = mp_get_cache( mp_generate_hash( $hash, $args ) );
             if( $cache ) {
                 return $cache;
             }
@@ -284,18 +287,18 @@ class Magepress
 
         // Run call
         try {
-            $response = self::soap()->call( self::login(), $name, $args );
+            $response = self::soap()->call( self::login(), $hash, $args );
         } catch( Exception $e ) {
             if( ( $e->getCode() == 0 || $e->getCode() == 1 ) && $tries < 2 ) {
                 self::login( true );
-                return self::call( $name, $args, $title, $tries += 1 );
+                return self::call( $hash, $args, $name, $tries += 1 );
             }
         }
 
         // Set cache
         if( isset( $response ) ) {
             if( MAGEPRESS_USE_CACHE ) {
-                mp_set_cache( mp_generate_hash( $name, $args), $title, $response, $name );
+                mp_set_cache( mp_generate_hash( $hash, $args), $name, $response, $hash );
             }
             return $response;
         }
@@ -336,8 +339,8 @@ class Magepress
                 break;
      
             // Check theme compatibility last
-            } elseif ( file_exists( trailingslashit( MAGEPRESS_DIR . 'templates/' ) . $template ) ) {
-                $located = trailingslashit( MAGEPRESS_DIR . 'templates/' ) . $template;
+            } elseif ( file_exists( trailingslashit( MAGEPRESS_DIR ) . 'templates/' . $template ) ) {
+                $located = trailingslashit( MAGEPRESS_DIR ) . 'templates/' . $template;
                 break;
             }
         }
@@ -356,6 +359,25 @@ class Magepress
         $output = ob_get_clean();
         
         return $output;
+    }
+
+    /**
+     * Update a registry
+     *
+     * @author Gijs Jorissen
+     * @since 0.1
+     */
+    static function update_registry( $name, $args )
+    {
+        $registry = get_option( $name, array() );
+        $registry[$args['hash']] = array(
+            'ID'    => $args['hash'],
+            'hash'  => $args['hash'],
+            'name'  => $args['name'],
+            'call'  => $args['call'],
+        );
+
+        update_option( $name, $registry );
     }
 }
 

@@ -64,11 +64,13 @@ class Magepress_Cache_Table extends WP_List_Table
 		switch( $column ) { 
 			case 'name':
 			case 'call':
-			case 'purge':
 				return $item[$column];
 				break;
 			case 'hash':
 				return str_replace( MAGEPRESS_CACHE_PREFIX, '', $item[$column] );
+				break;
+			case 'purge':
+				return 'purge';
 				break;
 			default:
 				return print_r( $item, true );
