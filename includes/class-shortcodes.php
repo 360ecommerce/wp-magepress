@@ -40,7 +40,7 @@ class Magepress_Shortcodes
 
         // Get collection
         $collection 	= Magepress_Product::get_product_list( $filters );
-        $products 		= $collection;
+        $products 		= $collection ? $collection : array();
 
         $content = Magepress::get_template( 'product-list.php', array( 'products' => $products, 'type' => $type ) );
         
