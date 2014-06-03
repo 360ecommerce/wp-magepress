@@ -89,7 +89,7 @@ class Magepress
 			define( 'MAGEPRESS_API_USER', get_option( 'magepress_api_user' ) );
 
 		if( ! defined( 'MAGEPRESS_API_KEY' ) ) 
-			define( 'MAGEPRESS_API_KEY', get_option( 'magepress_apii_key' ) );
+			define( 'MAGEPRESS_API_KEY', get_option( 'magepress_api_key' ) );
 
         if( ! defined( 'MAGEPRESS_USE_CACHE' ) ) 
             define( 'MAGEPRESS_USE_CACHE', get_option('magepress_use_cache') );
@@ -241,7 +241,7 @@ class Magepress
      */
 	static function soap()
     {
-        if( MAGEPRESS_API_USER ) {
+        if( MAGEPRESS_API_USER && MAGEPRESS_API_URL ) {
         	return new SoapClient( MAGEPRESS_API_URL, array( 'trace' => 1 ) );
         } else {
             throw new Exception( __( 'No credentials available', 'magepress' ) );
@@ -275,11 +275,11 @@ class Magepress
      * @author Gijs Jorissen
      * @since 0.1
      */
-    static function call( $hash, $args, $name ) 
+    static function call( $call, $args, $title ) 
     {
         // Get cache if cache enabled
         if( MAGEPRESS_USE_CACHE ) {
-            $cache = mp_get_cache( mp_generate_hash( $hash, $args ) );
+            $cache = mp_get_cache( mp_generate_hash( $call, $args ) );
             if( $cache ) {
                 return $cache;
             }
@@ -288,13 +288,18 @@ class Magepress
         // Run call
         try {
             $soap       = self::soap();
-            $response   = $soap->call( self::login(), $hash, $args );
-        } catch( Exception $e ) {}
+            $response   = $soap->call( self::login(), $call, $args );
+        } catch( Exception $e ) {
+            echo '<pre>';
+var_dump( $e );
+echo '</pre>';
+die();
+        }
 
         // Set cache
         if( isset( $response ) ) {
             if( MAGEPRESS_USE_CACHE ) {
-                mp_set_cache( mp_generate_hash( $hash, $args), $name, $response, $hash );
+                mp_set_cache( mp_generate_hash( $call, $args), $title, $response, $call );
             }
             return $response;
         }

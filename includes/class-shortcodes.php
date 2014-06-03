@@ -17,7 +17,8 @@ class Magepress_Shortcodes
 			'class'		=> '',
 		), $atts ) );
 
-		$categories = Magepress_Category::get_category_tree( $id );
+		$tree 		= Magepress_Category::get_category_tree( $id );
+		$categories = $tree ? $tree : array();
         $content 	= Magepress::get_template( 'category-list.php', array( 'categories' => $categories ) );
 
         return $content;
@@ -33,10 +34,10 @@ class Magepress_Shortcodes
         ), $atts ) );
 
 		// Set filters
-        $filters = array( 'count' => $count );
-        if( $ids ) {
-            $filters['ids'] = explode( ',', $ids );
-        }
+        $filters = array( 
+        	'count' => $count, 
+        	'ids'	=> $ids
+        );
 
         // Get collection
         $collection 	= Magepress_Product::get_product_list( $filters );
