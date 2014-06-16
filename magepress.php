@@ -289,12 +289,7 @@ class Magepress
         try {
             $soap       = self::soap();
             $response   = $soap->call( self::login(), $call, $args );
-        } catch( Exception $e ) {
-            echo '<pre>';
-var_dump( $e );
-echo '</pre>';
-die();
-        }
+        } catch( Exception $e ) {}
 
         // Set cache
         if( isset( $response ) ) {
