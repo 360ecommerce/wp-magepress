@@ -3,7 +3,7 @@
 if( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- * Check that 'class-wp-list-table.php' is available
+ * Check if 'class-wp-list-table.php' is available
  */
 if( ! class_exists( 'WP_List_Table' ) ) {
     require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
@@ -20,13 +20,25 @@ if( ! class_exists( 'WP_List_Table' ) ) {
  */
 class Magepress_Cache_Table extends WP_List_Table
 {
+	/**
+     * Get bulk actions
+     *
+     * @author Gijs Jorissen
+     * @since 0.1
+     */
 	function get_bulk_actions() 
 	{
 		return array(
-			'purge'    	=> 'Purge'
+			'purge_all'	=> __( 'Purge All', 'magepress' )
 		);
 	}
 
+	/**
+     * Get table columns
+     *
+     * @author Gijs Jorissen
+     * @since 0.1
+     */
 	function get_columns()
 	{
 		return array(
@@ -38,6 +50,12 @@ class Magepress_Cache_Table extends WP_List_Table
 		);
 	}
 
+	/**
+     * Define sortable columns
+     *
+     * @author Gijs Jorissen
+     * @since 0.1
+     */
 	function get_sortable_columns() 
 	{
         return array(
@@ -45,20 +63,32 @@ class Magepress_Cache_Table extends WP_List_Table
         );
     }
 
+    /**
+     * Populate items
+     *
+     * @author Gijs Jorissen
+     * @since 0.1
+     */
 	function prepare_items() 
 	{
-		$columns 				= $this->get_columns();
-		$hidden 				= array();
-		$sortable 				= array();
+		$columns 		= $this->get_columns();
+		$hidden 		= array();
+		$sortable 		= array();
 		
 		// Set properties
 		$this->_column_headers 	= array( $columns, $hidden, $sortable );
-		$this->items 			= get_option( 'magepress_cache_registry' );
+		$this->items 			= get_option( 'magepress_cache_registry', array() );
 
 		// Listen for bulk actions
-		$this->process_bulk_action();
+		$this->process_action();
 	}
 
+	/**
+     * Default output
+     *
+     * @author Gijs Jorissen
+     * @since 0.1
+     */
 	function column_default( $item, $column )  
 	{
 		switch( $column ) { 
@@ -70,7 +100,7 @@ class Magepress_Cache_Table extends WP_List_Table
 				return str_replace( MAGEPRESS_CACHE_PREFIX, '', $item[$column] );
 				break;
 			case 'purge':
-				return 'purge';
+				printf( '<a href="' . admin_url( 'options-general.php?page=magepress&tab=cache&purge=' . $item['hash'] ) . '">%s</a>', __('Purge', 'magepress') );
 				break;
 			default:
 				return print_r( $item, true );
@@ -78,17 +108,36 @@ class Magepress_Cache_Table extends WP_List_Table
 		}
 	}
 
+	/**
+     * Output for checkbox
+     *
+     * @author Gijs Jorissen
+     * @since 0.1
+     */
 	function column_cb($item) 
 	{
-        return sprintf( '<input type="checkbox" name="cache[]" value="%s" />', $item['ID'] );    
+        return sprintf( '<input type="checkbox" name="cache[]" value="%s" />', $item['id'] );    
     }
 
-    function process_bulk_action() 
+    /**
+     * Processor for actions
+     *
+     * @author Gijs Jorissen
+     * @since 0.1
+     */
+    function process_action() 
     {
+    	// Bulk actions
     	switch( $this->current_action() ) :
-    		case 'purge' :
-    			
+    		case 'purge_all' :
+    			Magepress_Cache::purge_all();
     		break;
     	endswitch;
+
+    	// Single actions
+    	if( isset( $_GET['purge'] ) ) {
+    		$hash = $_GET['purge'];
+    		mage_purge_cache( $hash );
+    	}
     }
 }

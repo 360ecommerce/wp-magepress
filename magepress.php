@@ -51,7 +51,12 @@ class Magepress
 			self::$instance->add_hooks();
 			self::$instance->execute();
 		}
+
+        // Set global
+        global $magepress;
+        $magepress = self::$instance;
 		
+        // Return instance
 		return self::$instance;
 	}
 
@@ -107,6 +112,7 @@ class Magepress
 	function includes()
 	{
         // Core
+        include( MAGEPRESS_DIR . 'includes/class-options.php' );
 		include( MAGEPRESS_DIR . 'includes/class-admin.php' );
         include( MAGEPRESS_DIR . 'includes/class-cache.php' );
         include( MAGEPRESS_DIR . 'includes/class-cache-table.php' );
@@ -147,6 +153,7 @@ class Magepress
      */
 	function execute()
 	{
+        self::$instance->options        = new Magepress_Options;
 		self::$instance->admin 			= new Magepress_Admin;
 		self::$instance->content_types 	= new Magepress_Content_Types;
 		self::$instance->shortcodes 	= new Magepress_Shortcodes;
@@ -256,13 +263,13 @@ class Magepress
      */
 	static function login( $force = false )
     {
-        $session = mp_get_cache( mp_generate_hash( 'session' ) );
+        $session = mage_get_cache( mage_generate_hash( 'session' ) );
         
         if( $session && !$force ) {
-            $session = $session;
+            $session   = $session;
         } elseif( $client = self::soap() ) {
-        	$session = $client->login( MAGEPRESS_API_USER, MAGEPRESS_API_KEY );
-        	mp_set_cache( mp_generate_hash( 'session' ), 'Login', $session, 'login' );
+        	$session   = $client->login( MAGEPRESS_API_USER, MAGEPRESS_API_KEY );
+        	$cache     = new Magepress_Cache( mage_generate_hash( 'session' ), 'Login', $session, 'login' );
         }
 
         return $session;
@@ -279,22 +286,23 @@ class Magepress
     {
         // Get cache if cache enabled
         if( MAGEPRESS_USE_CACHE ) {
-            $cache = mp_get_cache( mp_generate_hash( $call, $args ) );
+            $cache = Magepress_Cache::get( mage_generate_hash( $call, $args ) );
             if( $cache ) {
                 return $cache;
             }
         }
 
-        // Run call
         try {
             $soap       = self::soap();
             $response   = $soap->call( self::login(), $call, $args );
-        } catch( Exception $e ) {}
+        } catch( Exception $e ) {
+            // Catch
+        }
 
         // Set cache
         if( isset( $response ) ) {
             if( MAGEPRESS_USE_CACHE ) {
-                mp_set_cache( mp_generate_hash( $call, $args), $title, $response, $call );
+                Magepress_Cache::set( mage_generate_hash( $call, $args), $title, $response, $call );
             }
             return $response;
         }
@@ -366,13 +374,18 @@ class Magepress
     static function update_registry( $name, $args )
     {
         $registry = get_option( $name, array() );
-        $registry[$args['hash']] = array(
-            'ID'    => $args['hash'],
-            'hash'  => $args['hash'],
-            'name'  => $args['name'],
-            'call'  => $args['call'],
-        );
 
+        switch( $name ) :
+            case 'magepress_cache_registry' :
+                $registry[$args['id']] = array(
+                    'id'    => $args['id'],
+                    'hash'  => $args['hash'],
+                    'name'  => $args['name'],
+                    'call'  => $args['call'],
+                );
+                break;
+        endswitch;
+        
         update_option( $name, $registry );
     }
 }

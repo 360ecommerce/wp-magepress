@@ -10,6 +10,12 @@ class Magepress_Shortcodes
 		add_shortcode( 'magepress-product-list', array( &$this, 'product_list' ) );
 	}
 
+	/**
+     * Category list
+     *
+     * @author Gijs Jorissen
+     * @since 0.1
+     */
 	function category_list( $atts, $content = null )
 	{
 		extract( shortcode_atts( array(
@@ -24,6 +30,12 @@ class Magepress_Shortcodes
         return $content;
 	}
 
+	/**
+     * Product list
+     *
+     * @author Gijs Jorissen
+     * @since 0.1
+     */
 	function product_list( $atts, $content = null )
 	{
 		extract( shortcode_atts( array(
