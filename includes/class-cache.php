@@ -16,7 +16,7 @@ class Magepress_Cache
             return null;
         }
 
-        if( $result = get_transient( $hash ) ) {
+        if( $result = get_transient( self::prefix( $hash ) ) ) {
             return maybe_unserialize( $result );
         }
     }
