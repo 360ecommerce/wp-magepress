@@ -123,6 +123,7 @@ class Magepress
         include( MAGEPRESS_DIR . 'includes/class-category.php' );
         include( MAGEPRESS_DIR . 'includes/class-product.php' );
         include( MAGEPRESS_DIR . 'includes/class-checkout.php' );
+        include( MAGEPRESS_DIR . 'includes/class-user.php' );
 
         // Functions
         include( MAGEPRESS_DIR . 'includes/functions.php' );        
@@ -297,6 +298,9 @@ class Magepress
             $response   = $soap->call( self::login(), $call, $args );
         } catch( Exception $e ) {
             // Catch
+            echo '<pre>';
+            var_dump( $e->getMessage() );
+            echo '</pre>';
         }
 
         // Set cache

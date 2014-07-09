@@ -26,7 +26,7 @@ class Magepress_Product
         return $_product;
     }
 
-    public static function get_recently_viewed_products() 
+    public static function get_recently_viewed() 
     {
         if( isset( $_COOKIE['magepress_recently_viewed'] ) ) {
             $viewed = maybe_unserialize( base64_decode( maybe_unserialize( $_COOKIE['magepress_recently_viewed'] ) ) );
