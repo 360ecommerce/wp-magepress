@@ -116,10 +116,10 @@ class Magepress
 		include( MAGEPRESS_DIR . 'includes/class-admin.php' );
         include( MAGEPRESS_DIR . 'includes/class-cache.php' );
         include( MAGEPRESS_DIR . 'includes/class-cache-table.php' );
-		include( MAGEPRESS_DIR . 'includes/class-content-types.php' );
 		include( MAGEPRESS_DIR . 'includes/class-shortcodes.php' );
 
         // Entities
+        include( MAGEPRESS_DIR . 'includes/class-entity.php' );
         include( MAGEPRESS_DIR . 'includes/class-category.php' );
         include( MAGEPRESS_DIR . 'includes/class-product.php' );
         include( MAGEPRESS_DIR . 'includes/class-checkout.php' );
@@ -156,7 +156,6 @@ class Magepress
 	{
         self::$instance->options        = new Magepress_Options;
 		self::$instance->admin 			= new Magepress_Admin;
-		self::$instance->content_types 	= new Magepress_Content_Types;
 		self::$instance->shortcodes 	= new Magepress_Shortcodes;
 	}
 

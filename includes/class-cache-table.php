@@ -89,12 +89,12 @@ class Magepress_Cache_Table extends WP_List_Table
      * @author Gijs Jorissen
      * @since 0.1
      */
-	function column_default( $item, $column )  
+	function column_default( $item, $column )
 	{
 		switch( $column ) { 
 			case 'name':
 			case 'call':
-				return $item[$column];
+				return @$item[$column];
 				break;
 			case 'hash':
 				return str_replace( MAGEPRESS_CACHE_PREFIX, '', $item[$column] );

@@ -4,6 +4,12 @@ if( ! defined( 'ABSPATH' ) ) exit;
 
 class Magepress_Shortcodes
 {
+    /**
+     * Adds all shortcodes
+     *
+     * @author Gijs Jorissen
+     * @since 0.1
+     */
 	function __construct()
 	{
 		add_shortcode( 'magepress-category-list', array( &$this, 'category_list' ) );

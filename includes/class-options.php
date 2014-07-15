@@ -33,8 +33,8 @@ class Magepress_Options
     {
         $this->settings = array(
             'magepress_magento'     => array( 
-                'magento'               => array(
-                    'id'                    => 'magento',
+                'magepress_magento'         => array(
+                    'id'                    => 'magepress_magento',
                     'title'                 => '',
                     'callback'              => array( &$this, 'callback_section' ),
                     'fields'                => array(
@@ -62,8 +62,8 @@ class Magepress_Options
                 )
             ),
             'magepress_api'         => array(
-                'api'                   => array(
-                    'id'                    => 'id',
+                'magepress_api'             => array(
+                    'id'                    => 'magepress_api',
                     'title'                 => '',
                     'callback'              => array( &$this, 'callback_section' ),
                     'fields'                => array(
