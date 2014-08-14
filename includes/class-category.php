@@ -28,7 +28,7 @@ class Magepress_Category extends Magepress_Entity
     {
         $category      = Magepress::call(
             'catalog_category.info', 
-            self::arguments( array( 'categoryId' => $id ) ),
+            array( 'categoryId' => $id ),
             "Category Info (ID: $id)"
         );
         return $category;
